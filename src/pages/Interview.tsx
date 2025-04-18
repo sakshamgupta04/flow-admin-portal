@@ -105,7 +105,10 @@ export default function Interview() {
           </div>
           
           <div className="mt-4">
-            <Button className="bg-blue-500 hover:bg-blue-600">
+            <Button 
+              onClick={() => setShowEventDialog(true)}
+              className="bg-blue-500 hover:bg-blue-600"
+            >
               <CalendarIcon className="h-4 w-4 mr-2" />
               Create Event
             </Button>

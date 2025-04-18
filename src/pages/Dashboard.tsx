@@ -1,5 +1,5 @@
-import { BarChart2, Briefcase, Calendar, Users, FileText, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BarChart2, Briefcase, Calendar, Users, FileText, ArrowRight } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
