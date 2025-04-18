@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { BarChart2, Briefcase, Calendar, Users, FileText, ArrowRight } from "lucide-react";
+import { Briefcase, Calendar, Users, FileText } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import VacancyStats from "@/components/dashboard/VacancyStats";
+import JobFitmentTable from "@/components/dashboard/JobFitmentTable";
+import CandidateScores from "@/components/dashboard/CandidateScores";
 
 const vacancyData = [
   { name: "Jan", value: 12 },
@@ -55,14 +54,6 @@ const mockEmployeeData = [
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState<string>("all");
-  const [selectedFitment, setSelectedFitment] = useState<string>("all");
-
-  const filteredEmployees = mockEmployeeData.filter(employee => {
-    const roleMatch = selectedRole === "all" || employee.role === selectedRole;
-    const fitMatch = selectedFitment === "all" || employee.fitment === selectedFitment;
-    return roleMatch && fitMatch;
-  });
 
   const handleViewCandidate = (email: string) => {
     const candidate = candidates.find(c => c.email === email);
@@ -88,19 +79,7 @@ export default function Dashboard() {
           color="blue"
           className="relative overflow-hidden"
         >
-          <div className="absolute bottom-0 right-0 w-full h-20 pointer-events-none">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={vacancyData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#fff" 
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          <VacancyStats data={vacancyData} />
         </StatCard>
         
         <StatCard 
@@ -117,109 +96,16 @@ export default function Dashboard() {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Job Fitment</h3>
-            <div className="flex flex-col space-y-2">
-              <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  {jobRoles.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Select value={selectedFitment} onValueChange={setSelectedFitment}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Fitment" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {fitCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          <div className="overflow-x-auto mt-4">
-            <table className="min-w-full border-separate border-spacing-0">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600 rounded-tl-lg">Name</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Role</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600 rounded-tr-lg">Fitment</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white">
-                {filteredEmployees.map((employee, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
-                    <td className="py-3 px-4 border-t border-gray-100">{employee.name}</td>
-                    <td className="py-3 px-4 border-t border-gray-100">{employee.role}</td>
-                    <td className="py-3 px-4 border-t border-gray-100">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        employee.fitment === "Best Fit" ? "bg-green-100 text-green-800" :
-                        employee.fitment === "Mid Fit" ? "bg-yellow-100 text-yellow-800" :
-                        "bg-red-100 text-red-800"
-                      }`}>
-                        {employee.fitment}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <JobFitmentTable 
+          jobRoles={jobRoles}
+          fitCategories={fitCategories}
+          employees={mockEmployeeData}
+        />
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Candidate Fitment Scores</h3>
-          </div>
-          
-          <div className="space-y-4">
-            {candidates.map((candidate) => (
-              <div 
-                key={candidate.email} 
-                className="p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors cursor-pointer"
-                onClick={() => handleViewCandidate(candidate.email)}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h4 className="font-medium text-gray-900 dark:text-white">{candidate.name}</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{candidate.email}</p>
-                  </div>
-                  <div className={`text-lg font-semibold ${
-                    candidate.fitmentScore >= 70 ? "text-green-600" :
-                    candidate.fitmentScore >= 50 ? "text-yellow-600" :
-                    "text-red-600"
-                  }`}>
-                    {candidate.fitmentScore.toFixed(1)}%
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-4 flex justify-end">
-            <Button 
-              variant="link" 
-              className="text-blue-500 font-medium flex items-center"
-              onClick={() => navigate('/users')}
-            >
-              View All <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <CandidateScores 
+          candidates={candidates}
+          onViewCandidate={handleViewCandidate}
+        />
       </div>
     </div>
   );
