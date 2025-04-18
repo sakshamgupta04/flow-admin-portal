@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Briefcase, Calendar, Users, FileText } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
@@ -19,14 +20,6 @@ const vacancyData = [
   { name: "Oct", value: 10 },
   { name: "Nov", value: 15 },
   { name: "Dec", value: 20 },
-];
-
-const candidates = [
-  { name: "Saksham Gupta", email: "2022a6041@mietjammu.in", fitmentScore: 65.5 },
-  { name: "Ayush Thakur", email: "ayushthakur1412@gmail.com", fitmentScore: 69.94 },
-  { name: "Adishwar Sharma", email: "2021a1045@mietjammu.in", fitmentScore: 72.58 },
-  { name: "Garima Saigal", email: "garimasaigal02@gmail.com", fitmentScore: 55.32 },
-  { name: "Aarush Wali", email: "2022A6002@mietjammu.in", fitmentScore: 62.45 }
 ];
 
 const jobRoles = [
@@ -98,7 +91,7 @@ export default function Dashboard() {
           employees={mockEmployeeData}
         />
 
-        <CandidateScores candidates={candidates} />
+        <CandidateScores />
       </div>
 
       <InterviewScheduleDialog 
