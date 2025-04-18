@@ -1,8 +1,9 @@
-import { BarChart2, Briefcase, Calendar, Users, FileText } from "lucide-react";
+import { BarChart2, Briefcase, Calendar, Users, FileText, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import StatCard from "@/components/dashboard/StatCard";
-import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const vacancyData = [
@@ -21,42 +22,11 @@ const vacancyData = [
 ];
 
 const candidates = [
-  { 
-    name: "Joseph", 
-    title: "Top Scorer", 
-    score: 98.95, 
-    trend: [20, 25, 45, 30, 50, 60, 40, 80, 60, 70] 
-  },
-  { 
-    name: "Saksham Gupta", 
-    title: "", 
-    score: 90.15, 
-    trend: [40, 30, 50, 60, 45, 70, 60, 80, 75, 65] 
-  },
-  { 
-    name: "Aarush Wali", 
-    title: "", 
-    score: 80.02, 
-    trend: [30, 50, 40, 60, 50, 70, 60, 55, 65, 70] 
-  },
-  { 
-    name: "Iso", 
-    title: "", 
-    score: 71.25, 
-    trend: [20, 40, 30, 50, 45, 55, 50, 60, 50, 45] 
-  },
-  { 
-    name: "Yoru", 
-    title: "", 
-    score: 45.39, 
-    trend: [10, 20, 30, 40, 35, 45, 40, 50, 45, 35] 
-  },
-  { 
-    name: "Reyna", 
-    title: "", 
-    score: 78.64, 
-    trend: [30, 45, 40, 60, 50, 65, 60, 70, 65, 75] 
-  },
+  { name: "Saksham Gupta", email: "2022a6041@mietjammu.in", fitmentScore: 89.5 },
+  { name: "Ayush Thakur", email: "ayushthakur1412@gmail.com", fitmentScore: 69.94 },
+  { name: "Adishwar Sharma", email: "2021a1045@mietjammu.in", fitmentScore: 89.58 },
+  { name: "Garima Saigal", email: "garimasaigal02@gmail.com", fitmentScore: 75.32 },
+  { name: "Aarush Wali", email: "2022A6002@mietjammu.in", fitmentScore: 82.45 }
 ];
 
 const jobRoles = [
@@ -84,6 +54,7 @@ const mockEmployeeData = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [selectedFitment, setSelectedFitment] = useState<string>("all");
 
@@ -175,21 +146,21 @@ export default function Dashboard() {
           </div>
           
           <div className="overflow-x-auto">
-            <table className="min-w-full">
+            <table className="min-w-full border-separate border-spacing-0">
               <thead>
-                <tr className="text-left text-gray-500">
-                  <th className="py-3 px-4">Name</th>
-                  <th className="py-3 px-4">Role</th>
-                  <th className="py-3 px-4">Fitment</th>
+                <tr className="bg-gray-50">
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600 rounded-tl-lg">Name</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Role</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-600 rounded-tr-lg">Fitment</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white">
                 {filteredEmployees.map((employee, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="py-3 px-4">{employee.name}</td>
-                    <td className="py-3 px-4">{employee.role}</td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded-full text-sm ${
+                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4 border-t border-gray-100">{employee.name}</td>
+                    <td className="py-3 px-4 border-t border-gray-100">{employee.role}</td>
+                    <td className="py-3 px-4 border-t border-gray-100">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         employee.fitment === "Best Fit" ? "bg-green-100 text-green-800" :
                         employee.fitment === "Mid Fit" ? "bg-yellow-100 text-yellow-800" :
                         "bg-red-100 text-red-800"
@@ -204,9 +175,41 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Big 5 Analysis Section */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <AnalyticsCard candidates={candidates} />
+        {/* Candidate Fitment Scores Section */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Candidate Fitment Scores</h3>
+          </div>
+          
+          <div className="space-y-4">
+            {candidates.map((candidate) => (
+              <div key={candidate.email} className="p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{candidate.name}</h4>
+                    <p className="text-sm text-gray-500">{candidate.email}</p>
+                  </div>
+                  <div className={`text-lg font-semibold ${
+                    candidate.fitmentScore >= 80 ? "text-green-600" :
+                    candidate.fitmentScore >= 60 ? "text-yellow-600" :
+                    "text-red-600"
+                  }`}>
+                    {candidate.fitmentScore.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 flex justify-end">
+            <Button 
+              variant="link" 
+              className="text-blue-500 font-medium flex items-center"
+              onClick={() => navigate('/users')}
+            >
+              View All <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
