@@ -1,8 +1,12 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Plus } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 interface Job {
   id: string;
@@ -18,6 +22,19 @@ const jobs: Job[] = [
 ];
 
 export default function Jobs() {
+  const [showNewJobDialog, setShowNewJobDialog] = useState(false);
+  const [newJob, setNewJob] = useState({
+    title: '',
+    description: '',
+    requirements: ''
+  });
+
+  const handleSubmitJob = () => {
+    // Here you would typically handle the job submission
+    setShowNewJobDialog(false);
+    setNewJob({ title: '', description: '', requirements: '' });
+  };
+
   return (
     <div className="page-container">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -43,7 +60,12 @@ export default function Jobs() {
                   <TableCell className="font-medium">{job.title}</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button size="sm" className="bg-blue-500 hover:bg-blue-600">View</Button>
+                      <Button 
+                        size="sm" 
+                        className="bg-blue-500 hover:bg-blue-600"
+                      >
+                        View
+                      </Button>
                       <Button size="sm" variant="destructive">Delete</Button>
                     </div>
                   </TableCell>
@@ -57,12 +79,64 @@ export default function Jobs() {
         </div>
         
         <div className="p-4">
-          <Button className="bg-blue-500 hover:bg-blue-600">
+          <Button 
+            className="bg-blue-500 hover:bg-blue-600"
+            onClick={() => setShowNewJobDialog(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add New Job
           </Button>
         </div>
       </div>
+
+      {/* Add New Job Dialog */}
+      <Dialog open={showNewJobDialog} onOpenChange={setShowNewJobDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Job</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Input
+                placeholder="Job Title"
+                value={newJob.title}
+                onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
+              />
+            </div>
+            
+            <div>
+              <Textarea
+                placeholder="Job Description"
+                value={newJob.description}
+                onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div>
+              <Textarea
+                placeholder="Job Requirements"
+                value={newJob.requirements}
+                onChange={(e) => setNewJob({ ...newJob, requirements: e.target.value })}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button variant="outline" onClick={() => setShowNewJobDialog(false)}>
+                Cancel
+              </Button>
+              <Button 
+                className="bg-blue-500 hover:bg-blue-600"
+                onClick={handleSubmitJob}
+              >
+                Add Job
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
