@@ -8,6 +8,7 @@ interface StatCardProps {
   icon?: ReactNode;
   color?: "purple" | "blue" | "white";
   className?: string;
+  children?: ReactNode;
 }
 
 export default function StatCard({ 
@@ -15,11 +16,12 @@ export default function StatCard({
   title, 
   icon, 
   color = "white",
-  className
+  className,
+  children
 }: StatCardProps) {
   return (
     <div className={cn(
-      "stat-card flex items-start justify-between p-6",
+      "stat-card flex items-start justify-between p-6 relative",
       color === "purple" && "card-purple",
       color === "blue" && "card-blue",
       className
@@ -33,6 +35,7 @@ export default function StatCard({
           {icon}
         </div>
       )}
+      {children}
     </div>
   );
 }
