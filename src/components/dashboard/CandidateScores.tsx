@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import CandidateDetailsDialog from "./CandidateDetailsDialog";
 
 interface Candidate {
   name: string;
@@ -11,11 +12,10 @@ interface Candidate {
 
 interface CandidateScoresProps {
   candidates: Candidate[];
-  onViewCandidate: (email: string) => void;
 }
 
-export default function CandidateScores({ candidates, onViewCandidate }: CandidateScoresProps) {
-  const navigate = useNavigate();
+export default function CandidateScores({ candidates }: CandidateScoresProps) {
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
@@ -28,7 +28,7 @@ export default function CandidateScores({ candidates, onViewCandidate }: Candida
           <div 
             key={candidate.email} 
             className="p-4 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors cursor-pointer"
-            onClick={() => onViewCandidate(candidate.email)}
+            onClick={() => setSelectedCandidate(candidate)}
           >
             <div className="flex justify-between items-center">
               <div>
@@ -47,15 +47,11 @@ export default function CandidateScores({ candidates, onViewCandidate }: Candida
         ))}
       </div>
       
-      <div className="mt-4 flex justify-end">
-        <Button 
-          variant="link" 
-          className="text-blue-500 font-medium flex items-center"
-          onClick={() => navigate('/users')}
-        >
-          View All <ArrowRight className="ml-1 h-4 w-4" />
-        </Button>
-      </div>
+      <CandidateDetailsDialog 
+        isOpen={!!selectedCandidate}
+        onClose={() => setSelectedCandidate(null)}
+        candidate={selectedCandidate}
+      />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
@@ -6,35 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 export default function Interview() {
   const [showEventDialog, setShowEventDialog] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
-    user: ''
+    user: '',
+    date: new Date()
   });
 
-  const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  const currentMonth = "April 2025";
-  
-  const generateCalendarData = () => {
-    const rows = [
-      [{ day: 31, current: false }, ...Array(6).fill(0).map((_, i) => ({ day: i + 1, current: true }))],
-      [...Array(7).fill(0).map((_, i) => ({ day: i + 7, current: true }))],
-      [...Array(7).fill(0).map((_, i) => ({ day: i + 14, current: true }))],
-      [...Array(7).fill(0).map((_, i) => ({ day: i + 21, current: true }))],
-      [...Array(3).fill(0).map((_, i) => ({ day: i + 28, current: true })), ...Array(4).fill(0).map((_, i) => ({ day: i + 1, current: false }))]
-    ];
-    
-    return rows;
-  };
-  
-  const calendarData = generateCalendarData();
-  
-  const isToday = (day: number) => day === 18;
-  const isWeekend = (dayIndex: number) => dayIndex === 5 || dayIndex === 6;
-  
   const handleCreateEvent = () => {
     if (!newEvent.title || !newEvent.description || !newEvent.user) {
       toast({
@@ -47,11 +32,11 @@ export default function Interview() {
 
     toast({
       title: "Event Created",
-      description: "Your event has been scheduled successfully"
+      description: `Your event "${newEvent.title}" has been scheduled for ${format(selectedDate, 'PPP')}`
     });
     
     setShowEventDialog(false);
-    setNewEvent({ title: '', description: '', user: '' });
+    setNewEvent({ title: '', description: '', user: '', date: new Date() });
   };
 
   return (
@@ -62,47 +47,12 @@ export default function Interview() {
         </div>
         
         <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <button className="p-1 hover:bg-gray-100 rounded">
-              <span className="sr-only">Previous month</span>
-              &lt;
-            </button>
-            
-            <h2 className="text-lg font-medium">{currentMonth}</h2>
-            
-            <button className="p-1 hover:bg-gray-100 rounded">
-              <span className="sr-only">Next month</span>
-              &gt;
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-7 text-center mb-2">
-            {days.map((day) => (
-              <div key={day} className="text-xs font-medium text-gray-500 py-1">
-                {day}
-              </div>
-            ))}
-          </div>
-          
-          <div className="border rounded-md">
-            {calendarData.map((week, weekIndex) => (
-              <div key={weekIndex} className="grid grid-cols-7 text-center">
-                {week.map((date, dayIndex) => (
-                  <div 
-                    key={`${weekIndex}-${dayIndex}`} 
-                    className={`
-                      py-2 border-t first:border-t-0 border-r last:border-r-0
-                      ${!date.current ? 'text-gray-400' : ''}
-                      ${isToday(date.day) ? 'bg-blue-500 text-white' : ''}
-                      ${isWeekend(dayIndex) && !isToday(date.day) && date.current ? 'text-red-500' : ''}
-                    `}
-                  >
-                    {date.day}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={(date) => date && setSelectedDate(date)}
+            className="rounded-md border w-full"
+          />
           
           <div className="mt-4">
             <Button 
@@ -119,7 +69,7 @@ export default function Interview() {
       <Dialog open={showEventDialog} onOpenChange={setShowEventDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Event</DialogTitle>
+            <DialogTitle>Create New Event for {format(selectedDate, 'PPP')}</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">

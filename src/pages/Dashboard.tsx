@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Briefcase, Calendar, Users, FileText } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import VacancyStats from "@/components/dashboard/VacancyStats";
 import JobFitmentTable from "@/components/dashboard/JobFitmentTable";
 import CandidateScores from "@/components/dashboard/CandidateScores";
+import InterviewScheduleDialog from "@/components/dashboard/InterviewScheduleDialog";
 
 const vacancyData = [
   { name: "Jan", value: 12 },
@@ -53,14 +54,7 @@ const mockEmployeeData = [
 ];
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-
-  const handleViewCandidate = (email: string) => {
-    const candidate = candidates.find(c => c.email === email);
-    if (candidate) {
-      navigate('/users', { state: { selectedUser: candidate } });
-    }
-  };
+  const [showInterviews, setShowInterviews] = useState(false);
 
   return (
     <div className="page-container dark:bg-gray-900">
@@ -92,6 +86,8 @@ export default function Dashboard() {
           value="5"
           title="Scheduled Interviews For Today"
           icon={<Calendar size={24} className="text-blue" />}
+          onClick={() => setShowInterviews(true)}
+          className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         />
       </div>
       
@@ -102,11 +98,13 @@ export default function Dashboard() {
           employees={mockEmployeeData}
         />
 
-        <CandidateScores 
-          candidates={candidates}
-          onViewCandidate={handleViewCandidate}
-        />
+        <CandidateScores candidates={candidates} />
       </div>
+
+      <InterviewScheduleDialog 
+        isOpen={showInterviews}
+        onClose={() => setShowInterviews(false)}
+      />
     </div>
   );
 }
