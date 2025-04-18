@@ -17,6 +17,7 @@ export default function Users() {
     queryKey: ['users'],
     queryFn: async () => {
       try {
+        // Fetch users with all their details
         const { data: usersData, error: usersError } = await supabase
           .from('users')
           .select(`
@@ -30,10 +31,15 @@ export default function Users() {
             fitment_score
           `);
 
-        if (usersError) throw usersError;
+        if (usersError) {
+          console.error('Error fetching users:', usersError);
+          throw usersError;
+        }
 
+        // Map the user data to include personality scores
         const formattedUsers: UserProfile[] = await Promise.all(
           (usersData || []).map(async (user) => {
+            // Fetch personality scores for each user
             const { data: personalityData } = await supabase
               .from('user_personality_scores')
               .select('*')
@@ -73,10 +79,6 @@ export default function Users() {
     }
   });
 
-  const fetchUsers = () => {
-    refetch();
-  };
-
   return (
     <div className="page-container">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -85,7 +87,7 @@ export default function Users() {
           <Button 
             size="icon" 
             variant="outline" 
-            onClick={fetchUsers}
+            onClick={() => refetch()}
             disabled={isLoading}
           >
             <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
