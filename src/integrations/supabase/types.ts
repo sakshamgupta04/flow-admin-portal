@@ -357,6 +357,86 @@ export type Database = {
           },
         ]
       }
+      user_personality_scores: {
+        Row: {
+          agreeableness: number | null
+          conscientiousness: number | null
+          created_at: string | null
+          extroversion: number | null
+          id: string
+          neuroticism: number | null
+          openness: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agreeableness?: number | null
+          conscientiousness?: number | null
+          created_at?: string | null
+          extroversion?: number | null
+          id?: string
+          neuroticism?: number | null
+          openness?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agreeableness?: number | null
+          conscientiousness?: number | null
+          created_at?: string | null
+          extroversion?: number | null
+          id?: string
+          neuroticism?: number | null
+          openness?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_personality_scores_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          about: string | null
+          created_at: string | null
+          education: string | null
+          email: string
+          experience: string | null
+          fitment_score: number | null
+          id: string
+          job_role: string | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          about?: string | null
+          created_at?: string | null
+          education?: string | null
+          email: string
+          experience?: string | null
+          fitment_score?: number | null
+          id?: string
+          job_role?: string | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          about?: string | null
+          created_at?: string | null
+          education?: string | null
+          email?: string
+          experience?: string | null
+          fitment_score?: number | null
+          id?: string
+          job_role?: string | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

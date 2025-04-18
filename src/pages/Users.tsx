@@ -3,7 +3,9 @@ import { RefreshCw, ChevronLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface UserProfile {
   id: string;
@@ -23,104 +25,87 @@ interface UserProfile {
   };
 }
 
-const users: UserProfile[] = [
-  { 
-    id: "1", 
-    name: "Saksham Gupta", 
-    email: "2022a6041@mietjammu.in", 
-    score: 65.5,
-    jobRole: "Assistant Professor",
-    experience: "3+ Years",
-    education: "Ph.D. in Computer Science",
-    about: "Experienced educator with a focus on AI and machine learning",
-    personalityScores: {
-      extroversion: 75,
-      agreeableness: 82,
-      openness: 88,
-      neuroticism: 45,
-      conscientiousness: 79
-    }
-  },
-  { 
-    id: "2", 
-    name: "Ayush Thakur", 
-    email: "ayushthakur1412@gmail.com", 
-    score: 69.94,
-    jobRole: "Professor",
-    experience: "6+ Years",
-    education: "Master of Computer Science",
-    about: "Self experienced Front End Developer with a strong background in software and web development",
-    personalityScores: {
-      extroversion: 68,
-      agreeableness: 72,
-      openness: 85,
-      neuroticism: 42,
-      conscientiousness: 81
-    }
-  },
-  { 
-    id: "3", 
-    name: "Adishwar Sharma", 
-    email: "2021a1045@mietjammu.in", 
-    score: 72.58,
-    jobRole: "Software Engineer",
-    experience: "2+ Years",
-    education: "Bachelor of Technology",
-    about: "Passionate about coding and problem-solving",
-    personalityScores: {
-      extroversion: 60,
-      agreeableness: 75,
-      openness: 80,
-      neuroticism: 50,
-      conscientiousness: 75
-    }
-  },
-  { 
-    id: "4", 
-    name: "Garima Saigal", 
-    email: "garimasaigal02@gmail.com", 
-    score: 55.32,
-    jobRole: "Data Analyst",
-    experience: "1+ Year",
-    education: "Master of Science in Data Science",
-    about: "Detail-oriented data analyst with a knack for insights",
-    personalityScores: {
-      extroversion: 55,
-      agreeableness: 68,
-      openness: 75,
-      neuroticism: 55,
-      conscientiousness: 80
-    }
-  },
-  { 
-    id: "5", 
-    name: "Aarush Wali", 
-    email: "2022A6002@mietjammu.in", 
-    score: 62.45,
-    jobRole: "Web Developer",
-    experience: "2+ Years",
-    education: "Bachelor of Engineering",
-    about: "Creative web developer with a focus on user experience",
-    personalityScores: {
-      extroversion: 70,
-      agreeableness: 78,
-      openness: 82,
-      neuroticism: 48,
-      conscientiousness: 77
-    }
-  }
-];
-
 export default function Users() {
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select(`
+          id,
+          name,
+          email,
+          job_role,
+          experience,
+          education,
+          about,
+          fitment_score
+        `);
+
+      if (usersError) throw usersError;
+
+      const formattedUsers: UserProfile[] = await Promise.all(
+        (usersData || []).map(async (user) => {
+          const { data: personalityData } = await supabase
+            .from('user_personality_scores')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            score: user.fitment_score || 0,
+            jobRole: user.job_role,
+            experience: user.experience,
+            education: user.education,
+            about: user.about,
+            personalityScores: personalityData ? {
+              extroversion: personalityData.extroversion,
+              agreeableness: personalityData.agreeableness,
+              openness: personalityData.openness,
+              neuroticism: personalityData.neuroticism,
+              conscientiousness: personalityData.conscientiousness,
+            } : undefined
+          };
+        })
+      );
+
+      setUsers(formattedUsers);
+    } catch (error) {
+      toast({
+        title: "Error fetching users",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      console.error('Error fetching users:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <div className="page-container">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="p-4 flex justify-between items-center border-b">
           <h1 className="text-xl font-semibold">User List</h1>
-          <Button size="icon" variant="outline">
-            <RefreshCw size={16} />
+          <Button 
+            size="icon" 
+            variant="outline" 
+            onClick={fetchUsers}
+            disabled={isLoading}
+          >
+            <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
           </Button>
         </div>
         

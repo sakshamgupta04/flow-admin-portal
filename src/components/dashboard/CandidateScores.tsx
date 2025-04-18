@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import CandidateDetailsDialog from "./CandidateDetailsDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Candidate {
   name: string;
@@ -10,13 +12,61 @@ interface Candidate {
   fitmentScore: number;
 }
 
-interface CandidateScoresProps {
-  candidates: Candidate[];
-}
-
-export default function CandidateScores({ candidates }: CandidateScoresProps) {
+export default function CandidateScores() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
-  
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('name, email, fitment_score')
+          .order('fitment_score', { ascending: false })
+          .limit(5);
+
+        if (error) throw error;
+
+        const formattedCandidates = data.map(user => ({
+          name: user.name,
+          email: user.email,
+          fitmentScore: user.fitment_score || 0
+        }));
+
+        setCandidates(formattedCandidates);
+      } catch (error) {
+        toast({
+          title: "Error fetching candidates",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+        console.error('Error fetching candidates:', error);
+      }
+    };
+
+    fetchCandidates();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel('public:users')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'users' 
+        }, 
+        () => {
+          fetchCandidates();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
       <div className="flex justify-between items-center mb-4">
