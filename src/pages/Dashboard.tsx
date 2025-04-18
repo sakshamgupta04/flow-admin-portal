@@ -1,6 +1,5 @@
 import { BarChart2, Briefcase, Calendar, Users, FileText } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
-import JobsChart from "@/components/dashboard/JobsChart";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -139,48 +138,43 @@ export default function Dashboard() {
         />
       </div>
       
-      <div className="bg-white rounded-lg p-4 shadow-sm mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Hiring Ratio</h3>
-          <div className="flex space-x-4">
-            <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select Role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                {jobRoles.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={selectedFitment} onValueChange={setSelectedFitment}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select Fitment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {fitCategories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Job Fitment Section */}
+        <div className="bg-white rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Job Fitment</h3>
+            <div className="flex space-x-4">
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  {jobRoles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedFitment} onValueChange={setSelectedFitment}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Fitment" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {fitCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-        
-        <div className="h-72">
-          <JobsChart />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg p-4 shadow-sm">
+          
+          <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="text-left text-gray-500">
@@ -209,8 +203,9 @@ export default function Dashboard() {
             </table>
           </div>
         </div>
-        
-        <div>
+
+        {/* Big 5 Analysis Section */}
+        <div className="bg-white rounded-lg shadow-sm">
           <AnalyticsCard candidates={candidates} />
         </div>
       </div>
