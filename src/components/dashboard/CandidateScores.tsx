@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import CandidateDetailsDialog from "./CandidateDetailsDialog";
 
 interface Candidate {
@@ -21,6 +21,12 @@ export default function CandidateScores({ candidates }: CandidateScoresProps) {
     <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Candidate Fitment Scores</h3>
+        <Button variant="ghost" size="sm" asChild>
+          <Link to="/users" className="flex items-center gap-2">
+            View All
+            <ArrowRight size={16} />
+          </Link>
+        </Button>
       </div>
       
       <div className="space-y-4">
