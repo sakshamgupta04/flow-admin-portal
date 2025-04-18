@@ -22,11 +22,11 @@ const vacancyData = [
 ];
 
 const candidates = [
-  { name: "Saksham Gupta", email: "2022a6041@mietjammu.in", fitmentScore: 89.5 },
+  { name: "Saksham Gupta", email: "2022a6041@mietjammu.in", fitmentScore: 65.5 },
   { name: "Ayush Thakur", email: "ayushthakur1412@gmail.com", fitmentScore: 69.94 },
-  { name: "Adishwar Sharma", email: "2021a1045@mietjammu.in", fitmentScore: 89.58 },
-  { name: "Garima Saigal", email: "garimasaigal02@gmail.com", fitmentScore: 75.32 },
-  { name: "Aarush Wali", email: "2022A6002@mietjammu.in", fitmentScore: 82.45 }
+  { name: "Adishwar Sharma", email: "2021a1045@mietjammu.in", fitmentScore: 72.58 },
+  { name: "Garima Saigal", email: "garimasaigal02@gmail.com", fitmentScore: 55.32 },
+  { name: "Aarush Wali", email: "2022A6002@mietjammu.in", fitmentScore: 62.45 }
 ];
 
 const jobRoles = [
@@ -112,11 +112,11 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Job Fitment Section */}
         <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex justify-between items-center mb-4">
+          <div className="space-y-4">
             <h3 className="text-lg font-semibold">Job Fitment</h3>
-            <div className="flex space-x-4">
+            <div className="flex flex-col space-y-2">
               <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -130,7 +130,7 @@ export default function Dashboard() {
               </Select>
               
               <Select value={selectedFitment} onValueChange={setSelectedFitment}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Fitment" />
                 </SelectTrigger>
                 <SelectContent>
@@ -145,7 +145,7 @@ export default function Dashboard() {
             </div>
           </div>
           
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto mt-4">
             <table className="min-w-full border-separate border-spacing-0">
               <thead>
                 <tr className="bg-gray-50">
@@ -190,8 +190,8 @@ export default function Dashboard() {
                     <p className="text-sm text-gray-500">{candidate.email}</p>
                   </div>
                   <div className={`text-lg font-semibold ${
-                    candidate.fitmentScore >= 80 ? "text-green-600" :
-                    candidate.fitmentScore >= 60 ? "text-yellow-600" :
+                    candidate.fitmentScore >= 70 ? "text-green-600" :
+                    candidate.fitmentScore >= 50 ? "text-yellow-600" :
                     "text-red-600"
                   }`}>
                     {candidate.fitmentScore.toFixed(1)}%
