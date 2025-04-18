@@ -1,9 +1,10 @@
-
 import { BarChart2, Briefcase, Calendar, Users, FileText } from "lucide-react";
 import StatCard from "@/components/dashboard/StatCard";
 import JobsChart from "@/components/dashboard/JobsChart";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 const vacancyData = [
   { name: "Jan", value: 12 },
@@ -59,7 +60,40 @@ const candidates = [
   },
 ];
 
+const jobRoles = [
+  "Professor",
+  "Assistant Professor",
+  "Associate Professor",
+  "Head of Department",
+  "Dean",
+  "Research Associate",
+  "Lab Assistant",
+  "Academic Coordinator"
+];
+
+const fitCategories = ["Best Fit", "Mid Fit", "Not Fit"];
+
+const mockEmployeeData = [
+  { name: "Joseph Smith", role: "Professor", fitment: "Best Fit" },
+  { name: "Saksham Gupta", role: "Assistant Professor", fitment: "Best Fit" },
+  { name: "Aarush Wali", role: "Associate Professor", fitment: "Mid Fit" },
+  { name: "Iso Kumar", role: "Professor", fitment: "Not Fit" },
+  { name: "Yoru Singh", role: "Dean", fitment: "Mid Fit" },
+  { name: "Reyna Patel", role: "Research Associate", fitment: "Best Fit" },
+  { name: "Garima Saigal", role: "Lab Assistant", fitment: "Mid Fit" },
+  { name: "Raghav Sharma", role: "Academic Coordinator", fitment: "Best Fit" }
+];
+
 export default function Dashboard() {
+  const [selectedRole, setSelectedRole] = useState<string>("all");
+  const [selectedFitment, setSelectedFitment] = useState<string>("all");
+
+  const filteredEmployees = mockEmployeeData.filter(employee => {
+    const roleMatch = selectedRole === "all" || employee.role === selectedRole;
+    const fitMatch = selectedFitment === "all" || employee.fitment === selectedFitment;
+    return roleMatch && fitMatch;
+  });
+
   return (
     <div className="page-container">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -105,9 +139,75 @@ export default function Dashboard() {
         />
       </div>
       
+      <div className="bg-white rounded-lg p-4 shadow-sm mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Hiring Ratio</h3>
+          <div className="flex space-x-4">
+            <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                {jobRoles.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select value={selectedFitment} onValueChange={setSelectedFitment}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Select Fitment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {fitCategories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="h-72">
+          <JobsChart />
+        </div>
+      </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <JobsChart />
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <table className="min-w-full">
+              <thead>
+                <tr className="text-left text-gray-500">
+                  <th className="py-3 px-4">Name</th>
+                  <th className="py-3 px-4">Role</th>
+                  <th className="py-3 px-4">Fitment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredEmployees.map((employee, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="py-3 px-4">{employee.name}</td>
+                    <td className="py-3 px-4">{employee.role}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-sm ${
+                        employee.fitment === "Best Fit" ? "bg-green-100 text-green-800" :
+                        employee.fitment === "Mid Fit" ? "bg-yellow-100 text-yellow-800" :
+                        "bg-red-100 text-red-800"
+                      }`}>
+                        {employee.fitment}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
         
         <div>
