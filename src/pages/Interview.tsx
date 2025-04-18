@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
 
 export default function Interview() {
   const [showEventDialog, setShowEventDialog] = useState(false);
@@ -35,6 +36,20 @@ export default function Interview() {
   const isWeekend = (dayIndex: number) => dayIndex === 5 || dayIndex === 6;
   
   const handleCreateEvent = () => {
+    if (!newEvent.title || !newEvent.description || !newEvent.user) {
+      toast({
+        title: "Missing Fields",
+        description: "Please fill in all fields to create an event",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Event Created",
+      description: "Your event has been scheduled successfully"
+    });
+    
     setShowEventDialog(false);
     setNewEvent({ title: '', description: '', user: '' });
   };
@@ -143,8 +158,8 @@ export default function Interview() {
                 Cancel
               </Button>
               <Button 
-                className="bg-blue-500 hover:bg-blue-600"
                 onClick={handleCreateEvent}
+                className="bg-blue-500 hover:bg-blue-600"
               >
                 Create Event
               </Button>
