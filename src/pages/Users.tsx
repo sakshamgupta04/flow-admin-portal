@@ -2,13 +2,80 @@
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { useUsers, type UserProfile } from "@/hooks/useUsers";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 import UsersTable from "@/components/users/UsersTable";
 import UserDetailsDialog from "@/components/users/UserDetailsDialog";
+import type { UserProfile } from "@/hooks/useUsers";
 
 export default function Users() {
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const { users, isLoading, fetchUsers } = useUsers();
+  const { toast } = useToast();
+  
+  const { data: users = [], isLoading, refetch } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      try {
+        const { data: usersData, error: usersError } = await supabase
+          .from('users')
+          .select(`
+            id,
+            name,
+            email,
+            job_role,
+            experience,
+            education,
+            about,
+            fitment_score
+          `);
+
+        if (usersError) throw usersError;
+
+        const formattedUsers: UserProfile[] = await Promise.all(
+          (usersData || []).map(async (user) => {
+            const { data: personalityData } = await supabase
+              .from('user_personality_scores')
+              .select('*')
+              .eq('user_id', user.id)
+              .single();
+
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              score: user.fitment_score || 0,
+              jobRole: user.job_role,
+              experience: user.experience,
+              education: user.education,
+              about: user.about,
+              personalityScores: personalityData ? {
+                extroversion: personalityData.extroversion,
+                agreeableness: personalityData.agreeableness,
+                openness: personalityData.openness,
+                neuroticism: personalityData.neuroticism,
+                conscientiousness: personalityData.conscientiousness,
+              } : undefined
+            };
+          })
+        );
+
+        return formattedUsers;
+      } catch (error) {
+        toast({
+          title: "Error fetching users",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+        console.error('Error fetching users:', error);
+        return [];
+      }
+    }
+  });
+
+  const fetchUsers = () => {
+    refetch();
+  };
 
   return (
     <div className="page-container">

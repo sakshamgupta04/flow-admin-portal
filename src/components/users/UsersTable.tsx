@@ -20,31 +20,38 @@ export default function UsersTable({ users, onViewUser }: UsersTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className="font-medium">{user.name}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell className={
-              user.score >= 70 ? "text-green-500" : 
-              user.score >= 50 ? "text-orange-500" : 
-              "text-red-500"
-            }>
-              {user.score.toFixed(2)}%
-            </TableCell>
-            <TableCell>
-              <div className="flex space-x-2">
-                <Button 
-                  size="sm" 
-                  className="bg-blue-500 hover:bg-blue-600"
-                  onClick={() => onViewUser(user)}
-                >
-                  View
-                </Button>
-                <Button size="sm" variant="destructive">Delete</Button>
-              </div>
+        {users.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+              No users found.
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          users.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium">{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell className={
+                user.score >= 70 ? "text-green-500" : 
+                user.score >= 50 ? "text-orange-500" : 
+                "text-red-500"
+              }>
+                {user.score.toFixed(2)}%
+              </TableCell>
+              <TableCell>
+                <div className="flex space-x-2">
+                  <Button 
+                    size="sm" 
+                    className="bg-blue-500 hover:bg-blue-600"
+                    onClick={() => onViewUser(user)}
+                  >
+                    View
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );
