@@ -1,14 +1,23 @@
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Interview() {
+  const [showEventDialog, setShowEventDialog] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    description: '',
+    user: ''
+  });
+
   const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
   const currentMonth = "April 2025";
   
-  // Generate calendar data
   const generateCalendarData = () => {
-    // For the sample, we'll create a fixed calendar matching the image
     const rows = [
       [{ day: 31, current: false }, ...Array(6).fill(0).map((_, i) => ({ day: i + 1, current: true }))],
       [...Array(7).fill(0).map((_, i) => ({ day: i + 7, current: true }))],
@@ -22,9 +31,14 @@ export default function Interview() {
   
   const calendarData = generateCalendarData();
   
-  const isToday = (day: number) => day === 18; // Hardcoded for the example
+  const isToday = (day: number) => day === 18;
   const isWeekend = (dayIndex: number) => dayIndex === 5 || dayIndex === 6;
   
+  const handleCreateEvent = () => {
+    setShowEventDialog(false);
+    setNewEvent({ title: '', description: '', user: '' });
+  };
+
   return (
     <div className="page-container">
       <div className="bg-white rounded-lg shadow-sm overflow-hidden max-w-lg mx-auto">
@@ -83,6 +97,61 @@ export default function Interview() {
           </div>
         </div>
       </div>
+      
+      <Dialog open={showEventDialog} onOpenChange={setShowEventDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Event</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div>
+              <Input
+                placeholder="Event Title"
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+              />
+            </div>
+            
+            <div>
+              <Textarea
+                placeholder="Event Description"
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                className="min-h-[100px]"
+              />
+            </div>
+            
+            <div>
+              <Select
+                value={newEvent.user}
+                onValueChange={(value) => setNewEvent({ ...newEvent, user: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select User" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ayushthakur1412@gmail.com">
+                    ayushthakur1412@gmail.com
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button variant="outline" onClick={() => setShowEventDialog(false)}>
+                Cancel
+              </Button>
+              <Button 
+                className="bg-blue-500 hover:bg-blue-600"
+                onClick={handleCreateEvent}
+              >
+                Create Event
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
