@@ -9,6 +9,7 @@ interface StatCardProps {
   color?: "purple" | "blue" | "white";
   className?: string;
   children?: ReactNode;
+  onClick?: () => void; // Add onClick prop to interface
 }
 
 export default function StatCard({ 
@@ -17,15 +18,20 @@ export default function StatCard({
   icon, 
   color = "white",
   className,
-  children
+  children,
+  onClick
 }: StatCardProps) {
   return (
-    <div className={cn(
-      "stat-card flex items-start justify-between p-6 relative",
-      color === "purple" && "card-purple",
-      color === "blue" && "card-blue",
-      className
-    )}>
+    <div 
+      className={cn(
+        "stat-card flex items-start justify-between p-6 relative",
+        color === "purple" && "card-purple",
+        color === "blue" && "card-blue",
+        onClick && "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
+        className
+      )}
+      onClick={onClick}
+    >
       <div>
         <div className="stat-value">{value}</div>
         <div className="stat-title">{title}</div>
