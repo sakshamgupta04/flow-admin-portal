@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { RefreshCw, ChevronLeft } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
 
 interface UserProfile {
@@ -58,7 +58,57 @@ const users: UserProfile[] = [
       conscientiousness: 81
     }
   },
-  // ... Add similar detailed profiles for other users with scores between 40-80%
+  { 
+    id: "3", 
+    name: "Adishwar Sharma", 
+    email: "2021a1045@mietjammu.in", 
+    score: 72.58,
+    jobRole: "Software Engineer",
+    experience: "2+ Years",
+    education: "Bachelor of Technology",
+    about: "Passionate about coding and problem-solving",
+    personalityScores: {
+      extroversion: 60,
+      agreeableness: 75,
+      openness: 80,
+      neuroticism: 50,
+      conscientiousness: 75
+    }
+  },
+  { 
+    id: "4", 
+    name: "Garima Saigal", 
+    email: "garimasaigal02@gmail.com", 
+    score: 55.32,
+    jobRole: "Data Analyst",
+    experience: "1+ Year",
+    education: "Master of Science in Data Science",
+    about: "Detail-oriented data analyst with a knack for insights",
+    personalityScores: {
+      extroversion: 55,
+      agreeableness: 68,
+      openness: 75,
+      neuroticism: 55,
+      conscientiousness: 80
+    }
+  },
+  { 
+    id: "5", 
+    name: "Aarush Wali", 
+    email: "2022A6002@mietjammu.in", 
+    score: 62.45,
+    jobRole: "Web Developer",
+    experience: "2+ Years",
+    education: "Bachelor of Engineering",
+    about: "Creative web developer with a focus on user experience",
+    personalityScores: {
+      extroversion: 70,
+      agreeableness: 78,
+      openness: 82,
+      neuroticism: 48,
+      conscientiousness: 77
+    }
+  }
 ];
 
 export default function Users() {
@@ -134,9 +184,15 @@ export default function Users() {
           {selectedUser && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold">{selectedUser.name}</h3>
-                  <p className="text-gray-500">{selectedUser.email}</p>
+                <div className="space-y-4">
+                  <div className="aspect-square w-full max-w-[300px] mx-auto bg-gray-100 rounded-lg flex items-center justify-center">
+                    <span className="text-gray-400">Profile Image</span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-semibold">{selectedUser.name}</h3>
+                    <p className="text-gray-500">{selectedUser.email}</p>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -157,14 +213,13 @@ export default function Users() {
                     <p className="text-gray-600">{selectedUser.about}</p>
                   </div>
                 </div>
-
-                <Button className="w-full">View Resume</Button>
               </div>
 
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold mb-4">AI Generated Fitment Score</h3>
-                  <div className="text-center">
+                  <div className="text-center p-4 border rounded-lg">
+                    <Progress value={selectedUser.score} className="h-2 mb-2" />
                     <div className="text-3xl font-bold text-blue-600">
                       {selectedUser.score.toFixed(2)}%
                     </div>
@@ -172,21 +227,50 @@ export default function Users() {
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="font-medium">Personality Scores</h4>
-                  {selectedUser.personalityScores && Object.entries(selectedUser.personalityScores).map(([trait, score]) => (
-                    <div key={trait} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="capitalize">{trait} Score</span>
-                        <span>{score}%</span>
+                  <h4 className="font-medium">Personality Assessment</h4>
+                  {selectedUser.personalityScores && (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Extroversion Score</span>
+                          <span>{selectedUser.personalityScores.extroversion}%</span>
+                        </div>
+                        <Progress value={selectedUser.personalityScores.extroversion} className="h-2" />
                       </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-blue-500 rounded-full"
-                          style={{ width: `${score}%` }}
-                        />
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Agreeableness Score</span>
+                          <span>{selectedUser.personalityScores.agreeableness}%</span>
+                        </div>
+                        <Progress value={selectedUser.personalityScores.agreeableness} className="h-2" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Openness Score</span>
+                          <span>{selectedUser.personalityScores.openness}%</span>
+                        </div>
+                        <Progress value={selectedUser.personalityScores.openness} className="h-2" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Neuroticism Score</span>
+                          <span>{selectedUser.personalityScores.neuroticism}%</span>
+                        </div>
+                        <Progress value={selectedUser.personalityScores.neuroticism} className="h-2" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Conscientiousness Score</span>
+                          <span>{selectedUser.personalityScores.conscientiousness}%</span>
+                        </div>
+                        <Progress value={selectedUser.personalityScores.conscientiousness} className="h-2" />
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
